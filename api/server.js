@@ -39,12 +39,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // API routes (incluindo health check)
 app.use('/api', routes)
 
-// Servir arquivos estáticos do frontend (sempre)
-app.use(express.static(path.join(__dirname, '../interface/dist')))
+// Servir arquivos estáticos do frontend React (pasta build)
+app.use(express.static(path.join(__dirname, '../interface/build')))
 
 // Para todas as outras rotas, servir o index.html (SPA)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../interface/dist/index.html'))
+    res.sendFile(path.join(__dirname, '../interface/build/index.html'))
 })
 
 // Inicializar banco de dados e depois iniciar servidor

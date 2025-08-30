@@ -21,12 +21,12 @@ echo "🔨 Buildando o frontend..."
 cd interface && npm run build && cd ..
 
 echo "✅ Verificando se o build foi criado..."
-if [ -d "interface/dist" ]; then
-    echo "✅ Pasta dist criada com sucesso!"
-    echo "📁 Conteúdo da pasta dist:"
-    ls -la interface/dist/
+if [ -d "interface/build" ]; then
+    echo "✅ Pasta build criada com sucesso!"
+    echo "📁 Conteúdo da pasta build:"
+    ls -la interface/build/
 else
-    echo "❌ Erro: Pasta dist não foi criada!"
+    echo "❌ Erro: Pasta build não foi criada!"
     exit 1
 fi
 
