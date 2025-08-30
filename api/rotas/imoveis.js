@@ -1,29 +1,31 @@
 const express = require('express')
 const router = express.Router()
-const connection = require('../database')
+const pool = require('../database')
 const authconsultor = require('../middleware/authConsultor')
 const path = require('path')
-const { rawListeners } = require('process')
 
 // conexão com a tabela "imoveis"
 router.get('/', (req, res) => {
-    connection.query(`SELECT * FROM imoveis`, (err, results, fields) => {
+    pool.query(`SELECT * FROM imoveis`, (err, results) => {
         if (err) {
             console.error('Erro ao buscar infomações:', err)
             res.status(500).json({ error: 'Erro ao buscar informações no banco de dados' })
             return
         }
 
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // Rota para buscar imóveis
 router.get('/busca', (req, res) => {
 
     const { tipo, bairro, cidade, quartos, banheiros, precoVendaMin, precoVendaMax, precoAluguelMin, precoAluguelMax, qualidadeMax, qualidadeMin } = req.query
     const disponibilidade = req.query.disponibilidade ? req.query.disponibilidade.split(',') : []
 
-    let sqlQuery = 'SELECT * FROM imoveis WHERE 1'
+    let sqlQuery = 'SELECT * FROM imoveis WHERE 1=1'
+    const params = []
+    let paramCount = 0
 
     if (tipo) {
         const tipos = tipo.split(',').map(t => `'${t.trim()}'`).join(',')
@@ -36,53 +38,68 @@ router.get('/busca', (req, res) => {
     }
 
     if (cidade) {
-        sqlQuery += ` AND cidade = '${cidade}'`
+        sqlQuery += ` AND cidade = $${++paramCount}`
+        params.push(cidade)
     }
 
     if (quartos) {
-        sqlQuery += ` AND quartos = '${quartos}'`
+        sqlQuery += ` AND quartos = $${++paramCount}`
+        params.push(quartos)
     }
 
     if (banheiros) {
-        sqlQuery += ` AND banheiros = '${banheiros}'`
+        sqlQuery += ` AND banheiros = $${++paramCount}`
+        params.push(banheiros)
     }
+
     if (disponibilidade.length) {
         const dispoConditions = disponibilidade.map(d => `(disponibilidade = '${d}' OR disponibilidade = 'venda_e_aluguel')`).join(' OR ');
         sqlQuery += ` AND (${dispoConditions})`;
     }
 
     if (precoVendaMin && precoVendaMax) {
-        sqlQuery += ` AND preco_venda BETWEEN ${precoVendaMin} AND ${precoVendaMax}`
+        sqlQuery += ` AND preco_venda BETWEEN $${++paramCount} AND $${++paramCount}`
+        params.push(precoVendaMin, precoVendaMax)
     } else if (precoVendaMin) {
-        sqlQuery += ` AND preco_venda >= ${precoVendaMin}`
+        sqlQuery += ` AND preco_venda >= $${++paramCount}`
+        params.push(precoVendaMin)
     } else if (precoVendaMax) {
-        sqlQuery += ` AND preco_venda <= ${precoVendaMax}`
+        sqlQuery += ` AND preco_venda <= $${++paramCount}`
+        params.push(precoVendaMax)
     }
 
     if (precoAluguelMin && precoAluguelMax) {
-        sqlQuery += ` AND preco_aluguel BETWEEN ${precoAluguelMin} AND ${precoAluguelMax}`
+        sqlQuery += ` AND preco_aluguel BETWEEN $${++paramCount} AND $${++paramCount}`
+        params.push(precoAluguelMin, precoAluguelMax)
     } else if (precoAluguelMin) {
-        sqlQuery += ` AND preco_aluguel >= ${precoAluguelMin}`
+        sqlQuery += ` AND preco_aluguel >= $${++paramCount}`
+        params.push(precoAluguelMin)
     } else if (precoAluguelMax) {
-        sqlQuery += ` AND preco_aluguel <= ${precoAluguelMax}`
-    }
-    if (qualidadeMin && qualidadeMax) {
-        sqlQuery += ` AND qualidade BETWEEN ${qualidadeMin} AND ${qualidadeMax}`
-    } else if (qualidadeMin) {
-        sqlQuery += ` AND qualidade >= ${qualidadeMin}`
-    } else if (qualidadeMax) {
-        sqlQuery += ` AND qualidade <= ${qualidadeMax}`
+        sqlQuery += ` AND preco_aluguel <= $${++paramCount}`
+        params.push(precoAluguelMax)
     }
 
-    connection.query(sqlQuery, (err, results) => {
+    if (qualidadeMin && qualidadeMax) {
+        sqlQuery += ` AND qualidade BETWEEN $${++paramCount} AND $${++paramCount}`
+        params.push(qualidadeMin, qualidadeMax)
+    } else if (qualidadeMin) {
+        sqlQuery += ` AND qualidade >= $${++paramCount}`
+        params.push(qualidadeMin)
+    } else if (qualidadeMax) {
+        sqlQuery += ` AND qualidade <= $${++paramCount}`
+        params.push(qualidadeMax)
+    }
+
+    pool.query(sqlQuery, params, (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóveis:', err)
             return res.status(500).json({ error: 'Erro ao buscar imóveis' })
         }
 
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // rota para adicionar imoveis 
 router.post('/adicionar', (req, res) => {
     
@@ -111,16 +128,19 @@ router.post('/adicionar', (req, res) => {
         
     };
 
-    connection.query('INSERT INTO imoveis SET ?', imovel, (err, result) => {
-        if (err) {
-            console.error('Erro ao cadastrar imóvel:', err);
-            return res.status(500).json({ error: 'Erro ao cadastrar imóvel' });
-        }
-        const newId = result.insertId;
-        console.log('Imóvel cadastrado com sucesso! ID:', newId);
-        res.status(201).json({ id: newId, message: 'Imóvel cadastrado com sucesso!', imovel });
-    });
+    pool.query('INSERT INTO imoveis (tipo, endereco, numero, bairro, cidade, cep, quartos, banheiros, descricao, preco_venda, preco_aluguel, disponibilidade, qualidade, tamanho) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING imoveisid', 
+        [imovel.tipo, imovel.endereco, imovel.numero, imovel.bairro, imovel.cidade, imovel.cep, imovel.quartos, imovel.banheiros, imovel.descricao, imovel.preco_venda, imovel.preco_aluguel, imovel.disponibilidade, imovel.qualidade, imovel.tamanho], 
+        (err, result) => {
+            if (err) {
+                console.error('Erro ao cadastrar imóvel:', err);
+                return res.status(500).json({ error: 'Erro ao cadastrar imóvel' });
+            }
+            const newId = result.rows[0].imoveisid;
+            console.log('Imóvel cadastrado com sucesso! ID:', newId);
+            res.status(201).json({ id: newId, message: 'Imóvel cadastrado com sucesso!', imovel });
+        });
 })
+
 // Rota de deletar imóvel 
 router.delete('/deletar/:id', authconsultor, (req, res) => {
     const imovelID = req.params.id
@@ -131,20 +151,20 @@ router.delete('/deletar/:id', authconsultor, (req, res) => {
     }
 
     // Verificar se o imovel com ID especificado existe
-    connection.query('SELECT * FROM imoveis WHERE imoveisID = ? AND consultorId = ? ', [imovelID, consultorId], (err, results) => {
+    pool.query('SELECT * FROM imoveis WHERE imoveisid = $1 AND consultorid = $2', [imovelID, consultorId], (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóvel:', err)
             return res.status(500).json({ error: 'Erro ao bucar imóvel' })
         }
 
-        if (results.length === 0) {
+        if (results.rows.length === 0) {
             return res.status(404).json({ error: 'Você não tem permissão para deletar esse imovel ' })
         }
 
-        const imovel = results[0]
+        const imovel = results.rows[0]
 
         // Se o imovel existe, executa aquery para deleta-lo
-        connection.query('DELETE FROM imoveis WHERE imoveisID = ?  ', imovelID, (err, result) => {
+        pool.query('DELETE FROM imoveis WHERE imoveisid = $1', [imovelID], (err, result) => {
             if (err) {
                 console.error('Erro ao deletar imóvel:', err)
                 return res.status(500).json({ error: 'Erro ao deletar imóvel' })
@@ -155,6 +175,7 @@ router.delete('/deletar/:id', authconsultor, (req, res) => {
         })
     })
 })
+
 // Rota de atualizar imóvel
 router.put('/atualizar/:id', authconsultor, (req, res) => {
     const imovelID = req.params.id
@@ -171,11 +192,11 @@ router.put('/atualizar/:id', authconsultor, (req, res) => {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios' })
     }
 
-    connection.query('SELECT * FROM imoveis WHERE imoveisID = ? AND consultorId = ?', [imovelID, consultorId], (err, results) => {
+    pool.query('SELECT * FROM imoveis WHERE imoveisid = $1 AND consultorid = $2', [imovelID, consultorId], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Erro ao buscar o imóvel no banco de dados' })
         }
-        if (results.length === 0) {
+        if (results.rows.length === 0) {
             return res.status(403).json({ error: 'Acesso negado. Você não tem permissão para atualizar esse imóvel' })
         }
         const imovelAtualizado = {
@@ -195,106 +216,114 @@ router.put('/atualizar/:id', authconsultor, (req, res) => {
             tamanho: parseFloat(tamanho)
         }
 
-        connection.query('UPDATE imoveis SET ? WHERE imoveisID = ?', [imovelAtualizado, imovelID], (err, result) => {
-            if (err) {
-                console.error('Erro ao atualizar imóvel:', err)
-                return res.status(500).json({ error: 'Erro ao atualizar imóvel' })
-            }
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: 'Imóvel não encontrado' })
-            }
-            console.log('Imóvel atualizado com sucesso!')
-            return res.status(200).json({ message: 'Imóvel atualizado com sucesso!', imovelAtualizado })
-        })
+        pool.query('UPDATE imoveis SET tipo = $1, endereco = $2, numero = $3, bairro = $4, cidade = $5, cep = $6, quartos = $7, banheiros = $8, descricao = $9, preco_venda = $10, preco_aluguel = $11, tamanho = $12, qualidade = $13, disponibilidade = $14 WHERE imoveisid = $15', 
+            [imovelAtualizado.tipo, imovelAtualizado.endereco, imovelAtualizado.numero, imovelAtualizado.bairro, imovelAtualizado.cidade, imovelAtualizado.cep, imovelAtualizado.quartos, imovelAtualizado.banheiros, imovelAtualizado.descricao, imovelAtualizado.preco_venda, imovelAtualizado.preco_aluguel, imovelAtualizado.tamanho, imovelAtualizado.qualidade, imovelAtualizado.disponibilidade, imovelID], 
+            (err, result) => {
+                if (err) {
+                    console.error('Erro ao atualizar imóvel:', err)
+                    return res.status(500).json({ error: 'Erro ao atualizar imóvel' })
+                }
+                if (result.rowCount === 0) {
+                    return res.status(404).json({ error: 'Imóvel não encontrado' })
+                }
+                console.log('Imóvel atualizado com sucesso!')
+                return res.status(200).json({ message: 'Imóvel atualizado com sucesso!', imovelAtualizado })
+            })
     })
 })
+
 // Rotas de disponibilidade {venda e aluguel }
 // Rota para separar disponibilidade de venda
 router.get('/venda', (req, res) => {
-    let sqlQuery = 'SELECT * FROM imoveis WHERE disponibilidade IN ("venda", "venda_e_aluguel")'
+    let sqlQuery = 'SELECT * FROM imoveis WHERE disponibilidade IN (\'venda\', \'venda_e_aluguel\')'
 
-    connection.query(sqlQuery, (err, results) => {
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóvel para venda:', err)
             return res.status(500).json({ error: 'Erro ao buscar imóveis para a venda' })
         }
         console.log('Imóvel buscado com sucesso!')
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // Rota para separar disponibilidade de aluguel
 router.get('/aluguel', (req, res) => {
-    let sqlQuery = 'SELECT * FROM imoveis WHERE disponibilidade IN ("aluguel", "venda_e_aluguel")'
+    let sqlQuery = 'SELECT * FROM imoveis WHERE disponibilidade IN (\'aluguel\', \'venda_e_aluguel\')'
 
-    connection.query(sqlQuery, (err, results) => {
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóvel para aluguel:', err)
             return res.status(500).json({ error: 'Erro ao buscar imóveis para a aluguel' })
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 //rota para pegar todas as cidades disponíveis
 router.get('/cidades', (req, res) => {
     let sqlQuery = 'SELECT DISTINCT cidade FROM imoveis ORDER BY cidade ASC'
-    connection.query(sqlQuery, (err, results) => {
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Erro ao buscar cidades disponíveis: ', err)
             return res.status(500).json({ error: 'Erro ao buscar cidades disponíveis' })
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // rota para pegar as cidades disponíveis dos imóveis a venda
 router.get('/cidadesvenda', (req, res) => {
-    let sqlQuery = 'SELECT DISTINCT cidade FROM imoveis WHERE disponibilidade = "venda" OR disponibilidade = "venda_e_aluguel" ORDER BY cidade ASC'
-    connection.query(sqlQuery, (err, results) => {
+    let sqlQuery = 'SELECT DISTINCT cidade FROM imoveis WHERE disponibilidade = \'venda\' OR disponibilidade = \'venda_e_aluguel\' ORDER BY cidade ASC'
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Erro ao buscar cidades disponíveis: ', err)
             return res.status(500).json({ error: 'Erro ao buscar cidades disponíveis' })
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // rota para pegar as cidades disponíveis dos imóveis para alugar
 router.get('/cidadesaluguel', (req, res) => {
-    let sqlQuery = 'SELECT DISTINCT cidade FROM imoveis WHERE disponibilidade = "aluguel" OR disponibilidade = "venda_e_aluguel" ORDER BY cidade ASC'
-    connection.query(sqlQuery, (err, results) => {
+    let sqlQuery = 'SELECT DISTINCT cidade FROM imoveis WHERE disponibilidade = \'aluguel\' OR disponibilidade = \'venda_e_aluguel\' ORDER BY cidade ASC'
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Erro ao buscar cidades disponíveis: ', err)
             return res.status(500).json({ error: 'Erro ao buscar cidades disponíveis' })
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // rota para pegar o imóvel por id 
 router.get('/buscarimovelid', (req, res) => {
     const imovelID = req.query.id;
 
     let sqlQuery = `
-        SELECT i.*, GROUP_CONCAT(img.url) as imagens 
+        SELECT i.*, STRING_AGG(img.url, ',') as imagens 
         FROM imoveis i
-        LEFT JOIN imagens img ON i.imoveisID = img.imoveisID
-        WHERE i.imoveisID = ?
-        GROUP BY i.imoveisID
+        LEFT JOIN imagens img ON i.imoveisid = img.imoveisid
+        WHERE i.imoveisid = $1
+        GROUP BY i.imoveisid
     `
-    connection.query(sqlQuery, [imovelID], (err, results) => {
+    pool.query(sqlQuery, [imovelID], (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóvel por id:', err);
             return res.status(500).json({ error: 'Erro ao buscar imóvel por id' })
         }
-        res.json(results);
+        res.json(results.rows);
     })
 })
 
 router.get('/ordenarimovelqualidade', (req, res) => {
     let sqlQuery = 'SELECT * FROM imoveis ORDER BY qualidade DESC'
-    connection.query(sqlQuery, (err, results) => {
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Erro ao buscar imóveis por qualidade ' })
         }
 
-        res.json(results)
+        res.json(results.rows)
     })
 })
 
@@ -305,16 +334,17 @@ router.get('/porConsultor', (req, res) => {
         return res.status(400).json({ error: 'ConsultorId é obrigatório' });
     }
 
-    const sqlQuery = 'SELECT * FROM imoveis WHERE consultorId = ?'
-    connection.query(sqlQuery, [consultorId], (err, results) => {
+    const sqlQuery = 'SELECT * FROM imoveis WHERE consultorid = $1'
+    pool.query(sqlQuery, [consultorId], (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóveis:', err);
             return res.status(500).json({ error: 'Erro ao buscar imóveis' })
         }
 
-        res.json(results)
+        res.json(results.rows)
     })
 })
+
 // rota para buscar imagem por id do imovel 
 router.get('/imagensimovel/:id', (req, res) => {
     const id = req.params.id.trim()
@@ -334,22 +364,22 @@ router.get('/imagensimovel/:id', (req, res) => {
 router.get('/favoritos', (req, res) => {
     const { clienteID } = req.query
 
-    const query = 'SELECT * FROM imoveis WHERE imoveisID IN (SELECT imovelID FROM favoritos WHERE clienteID = ?)'
+    const query = 'SELECT * FROM imoveis WHERE imoveisid IN (SELECT imovelid FROM favoritos WHERE clienteid = $1)'
 
-    connection.query(query, [clienteID], (err, results) => {
+    pool.query(query, [clienteID], (err, results) => {
         if (err) {
             return res.status(500).send(err)
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
 
 router.post('/adicionarimovelfavorito', (req, res) => {
     const { clienteID, imovelID } = req.body
 
-    const query = 'INSERT INTO favoritos (clienteID, imovelID) VALUES (?, ?)'
+    const query = 'INSERT INTO favoritos (clienteid, imovelid) VALUES ($1, $2)'
 
-    connection.query(query, [clienteID, imovelID], (err, result) => {
+    pool.query(query, [clienteID, imovelID], (err, result) => {
         if (err) {
             return res.status(500).send(err)
         }
@@ -360,9 +390,9 @@ router.post('/adicionarimovelfavorito', (req, res) => {
 router.delete('/removerimovelfavorito', (req, res) => {
     const { clienteID, imovelID } = req.body
 
-    const query = "DELETE FROM favoritos WHERE clienteID = ? AND imovelID = ?"
+    const query = "DELETE FROM favoritos WHERE clienteid = $1 AND imovelid = $2"
 
-    connection.query(query, [clienteID, imovelID], (err, result) =>{
+    pool.query(query, [clienteID, imovelID], (err, result) =>{
         if(err){
             return res.status(500).send(err)
         }

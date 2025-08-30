@@ -1,41 +1,51 @@
 const express = require('express')
 const router = express.Router()
-const connection = require('../database')
+const pool = require('../database')
 const jwt = require('jsonwebtoken')
 const authconsultor = require('../middleware/authConsultor')
 const path = require('path')
 
 // conexão a tabela "consultor"
 router.get('/', (req, res) => {
-    connection.query(`SELECT * FROM consultores`, (err, results, fields) => {
-        res.send(results)
+    pool.query(`SELECT * FROM consultores`, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar consultores:', err)
+            return res.status(500).json({ error: 'Erro ao buscar consultores' })
+        }
+        res.json(results.rows)
     })
 })
+
 // rota para login de consultor
 router.post('/login', (req, res) => {
     const { consultor_email, senha } = req.body;
 
-    connection.query('SELECT * FROM consultores WHERE consultor_email = ?', [consultor_email], (err, results) => {
+    pool.query('SELECT * FROM consultores WHERE consultor_email = $1', [consultor_email], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Erro ao buscar consultor no banco de dados' });
         }
 
-        if (results.length === 0 || results[0].senha !== senha) {
+        if (results.rows.length === 0 || results.rows[0].senha !== senha) {
             return res.status(401).json({ error: 'Credenciais inválidas' });
         }
 
-        const token = jwt.sign({ consultorId: results[0].consultorId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ consultorId: results.rows[0].consultorid }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
     });
 })
+
 // rota para cadastrar consultores
 router.post('/cadastrar', (req, res) => {
 
     const { nome, consultor_email, senha, cpf, celular, whatsApp } = req.body
 
-    connection.query(`SELECT * FROM consultores`, (err, results, fields) => {
+    pool.query(`SELECT * FROM consultores`, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao verificar consultores existentes' })
+        }
+
         let estaPresente = false
-        results.forEach(val => {
+        results.rows.forEach(val => {
             if (val.consultor_email === consultor_email || val.cpf === cpf) {
                 estaPresente = true
             }
@@ -44,12 +54,15 @@ router.post('/cadastrar', (req, res) => {
         if (estaPresente) {
             res.send({ mensagem: "usuário ja esta cadastrado" })
         } else {
-            connection.query(
-                'INSERT INTO consultores (nome, consultor_email, senha, cpf, celular, whatsApp) VALUES (?, ?, ?, ?, ?, ?)', [nome, consultor_email, senha, cpf, celular, whatsApp], (err, result) => {
+            pool.query(
+                'INSERT INTO consultores (nome, consultor_email, senha, cpf, celular, whatsapp) VALUES ($1, $2, $3, $4, $5, $6) RETURNING consultorid', 
+                [nome, consultor_email, senha, cpf, celular, whatsApp], 
+                (err, result) => {
                     if (err) {
                         console.log(err)
+                        return res.status(500).json({ error: 'Erro ao cadastrar consultor' })
                     }
-                    const newId = result.insertId
+                    const newId = result.rows[0].consultorid
                     res.send({ userID: newId, nome, consultor_email, senha, cpf, celular, whatsApp })
                 }
             )
@@ -64,18 +77,19 @@ router.get('/busca', (req, res) => {
         return res.status(400).json({ error: 'Parametro email é obrigatorio' })
     }
 
-    connection.query('SELECT * FROM consultores WHERE consultor_email = ?', [consultor_email], (err, results) => {
+    pool.query('SELECT * FROM consultores WHERE consultor_email = $1', [consultor_email], (err, results) => {
         if (err) {
-            console.error('Erro ao buscar por cleientes:', err)
-            return res.status(500).json({ error: 'Erro ao buscar por cleientes' })
+            console.error('Erro ao buscar por consultores:', err)
+            return res.status(500).json({ error: 'Erro ao buscar por consultores' })
         }
-        if (results.length === 0) {
-            return res.status(500).json({ error: 'Nenhum cliente cadastrado com este email' })
+        if (results.rows.length === 0) {
+            return res.status(500).json({ error: 'Nenhum consultor cadastrado com este email' })
         }
 
-        res.status(200).json(results)
+        res.status(200).json(results.rows)
     })
 })
+
 // Rota para buscar imóveis por cliente (apenas para o consultor autenticado) 
 router.get('/meus-imoveis', authconsultor, (req, res) => {
 
@@ -85,29 +99,29 @@ router.get('/meus-imoveis', authconsultor, (req, res) => {
         return { mensagem: "O usuário não tem permissão para cadastrar um imóvel" }
     }
 
-    connection.query('SELECT * FROM imoveis WHERE consultorId = ?', [consultorId], (err, results) => {
+    pool.query('SELECT * FROM imoveis WHERE consultorid = $1', [consultorId], (err, results) => {
         if (err) {
             console.error('Erro ao buscar imóveis:', err)
             return res.status(500).json({ error: 'Erro ao buscar imóveis' })
         }
-        if (results.length === 0) {
-            return res.status(500).json({ error: 'Nenhum imóvel cadastrado para este cliente' })
+        if (results.rows.length === 0) {
+            return res.status(500).json({ error: 'Nenhum imóvel cadastrado para este consultor' })
         }
 
-        res.status(200).json(results)
+        res.status(200).json(results.rows)
     })
 })
 
 router.get('/buscarconsultorid', (req, res) => {
     const consultorId = req.query.id
 
-    let sqlQuery = 'SELECT * FROM consultores WHERE consultorId = ?'
-    connection.query(sqlQuery, [consultorId], (err, results) => {
+    let sqlQuery = 'SELECT * FROM consultores WHERE consultorid = $1'
+    pool.query(sqlQuery, [consultorId], (err, results) => {
         if (err) {
             console.error('Erro ao buscar consultor por id:', err)
             return res.status(500).json({ error: 'Erro ao buscar consultor por id ' })
         }
-        res.json(results)
+        res.json(results.rows)
     })
 })
 

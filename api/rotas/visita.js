@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const connection = require('../database')
+const pool = require('../database')
 const authCliente = require('../middleware/authCliente')
 const nodemailer = require('nodemailer')
 require('dotenv').config()
@@ -46,9 +46,9 @@ router.post('/', authCliente, (req, res) => {
     const { imoveisID, data_visita } = req.body
     const clienteId = req.clienteId
 
-    const sql = ` INSERT INTO visitas (clienteId, imoveisID, data_visita) VALUES (?, ?, ?)`
+    const sql = ` INSERT INTO visitas (clienteid, imoveisid, data_visita) VALUES ($1, $2, $3) RETURNING visitaid`
 
-    connection.query(sql, [clienteId, imoveisID, data_visita], (err, results) => {
+    pool.query(sql, [clienteId, imoveisID, data_visita], (err, results) => {
         if (err) {
             console.error('Erro ao agendar a visita: ', err)
             return res.status(500).json({ error: 'Erro ao agendar a visita' })
@@ -57,27 +57,27 @@ router.post('/', authCliente, (req, res) => {
         const consultaImovel = `
         SELECT *
         FROM imoveis
-        WHERE imoveisID = ?
+        WHERE imoveisid = $1
     `;
-        connection.query(consultaImovel, [imoveisID], (err, resultsImovel) => {
+        pool.query(consultaImovel, [imoveisID], (err, resultsImovel) => {
             if (err) {
                 console.error('Erro ao buscar informações no imóvel:', err)
-                return req.status(500).json({ error: 'Erro ao buscar informações no imóvel' })
+                return res.status(500).json({ error: 'Erro ao buscar informações no imóvel' })
             }
 
             const consultaCliente = `
             SELECT * 
             FROM clientes
-            WHERE clienteId = ?
+            WHERE clienteid = $1
         `
-            connection.query(consultaCliente, [clienteId], (err, resultsCliente) => {
+            pool.query(consultaCliente, [clienteId], (err, resultsCliente) => {
                 if (err) {
                     console.error('Erro ao buscar inforamções do cliente')
                     return res.status(500).json({ error: 'Erro ao buscar inforamções do cliente' })
                 }
-                if (resultsImovel.length > 0 && resultsCliente.length > 0) {
-                    const corpoImovel = JSON.stringify(resultsImovel[0], null, 2);
-                    const corpoCliente = JSON.stringify(resultsCliente[0], null, 2)
+                if (resultsImovel.rows.length > 0 && resultsCliente.rows.length > 0) {
+                    const corpoImovel = JSON.stringify(resultsImovel.rows[0], null, 2);
+                    const corpoCliente = JSON.stringify(resultsCliente.rows[0], null, 2)
 
                     enviarEmail(process.env.EMAIL_DESTINATARIO, corpoImovel, corpoCliente, data_visita)
 
@@ -89,36 +89,51 @@ router.post('/', authCliente, (req, res) => {
         })
     })
 })
+
 router.get('/visitas', (req, res) => {
     const {clienteID, consultorID} = req.query
 
-    let query = "SELECT v.visitaId, ci.clienteId, i.imoveisID, co.consultorId, v.data_visita, v.comentario, i.tipo, i.endereco, i.numero, i.bairro, i.cidade, i.cep, i.quartos, i.banheiros, i.preco_venda, i.preco_aluguel, i.tamanho, i.disponibilidade, i.vagas, co.nome AS nome_consultor, co.consultor_email, ci.email AS cliente_email, ci.nome AS nome_cliente FROM visitas AS v JOIN imoveis AS i ON v.imoveisID = i.imoveisID JOIN clientes AS ci ON v.clienteId = ci.clienteId JOIN consultores AS co ON v.consultorId = co.consultorId"
+    let query = "SELECT v.visitaid, ci.clienteid, i.imoveisid, co.consultorid, v.data_visita, v.comentario, i.tipo, i.endereco, i.numero, i.bairro, i.cidade, i.cep, i.quartos, i.banheiros, i.preco_venda, i.preco_aluguel, i.tamanho, i.disponibilidade, i.vagas, co.nome AS nome_consultor, co.consultor_email, ci.email AS cliente_email, ci.nome AS nome_cliente FROM visitas AS v JOIN imoveis AS i ON v.imoveisid = i.imoveisid JOIN clientes AS ci ON v.clienteid = ci.clienteid JOIN consultores AS co ON v.consultorid = co.consultorid"
 
     if(clienteID){
-        query += ` WHERE v.clienteId = ${clienteID}`
+        query += ` WHERE v.clienteid = $1`
+        pool.query(query, [clienteID], (err, result) => {
+            if(err){
+                return res.status(500).send(err)
+            }
+            res.send(result.rows)
+        })
     }else if(consultorID){
-        query += ` WHERE v.consultorId = ${consultorID}`
+        query += ` WHERE v.consultorid = $1`
+        pool.query(query, [consultorID], (err, result) => {
+            if(err){
+                return res.status(500).send(err)
+            }
+            res.send(result.rows)
+        })
+    } else {
+        pool.query(query, (err, result) => {
+            if(err){
+                return res.status(500).send(err)
+            }
+            res.send(result.rows)
+        })
     }
-
-    connection.query(query, (err, result) => {
-        if(err){
-            return res.status(500).send(err)
-        }
-        res.send(result)
-    })
 })
+
 router.get('/getconsultores', (req, res) => {
     const {clienteID} = req.query
 
-    let query = "SELECT DISTINCT c.consultorId, c.nome, c.consultor_email FROM visitas JOIN consultores AS c ON visitas.consultorId = c.consultorId WHERE clienteId = 1"
+    let query = "SELECT DISTINCT c.consultorid, c.nome, c.consultor_email FROM visitas JOIN consultores AS c ON visitas.consultorid = c.consultorid WHERE clienteid = $1"
 
-    connection.query(query, [clienteID], (err, result) => {
+    pool.query(query, [clienteID], (err, result) => {
         if(err){
             return res.status(500).send(err)
         }
-        res.send(result)
+        res.send(result.rows)
     })
 })
+
 router.post('/agendarvisita', (req, res) => {
     const { clienteID, consultorID, imovelID, data_visita, comentario, nome, email } = req.body
 
@@ -126,19 +141,19 @@ router.post('/agendarvisita', (req, res) => {
     let consultorEmail
 
     // Verifica se a data já está reservada
-    connection.query("SELECT * FROM visitas WHERE imoveisID = ? AND data_visita = ?", [imovelID, data_visita], (req, result) => {
-        if(result.length > 0) {
+    pool.query("SELECT * FROM visitas WHERE imoveisid = $1 AND data_visita = $2", [imovelID, data_visita], (err, result) => {
+        if(result.rows.length > 0) {
             return res.send(JSON.stringify({agendado: false, mensagem: "A data solicitada já está reservada"}))
         }
         if (clienteID) {
-            connection.query("SELECT nome, email, celular FROM clientes WHERE clienteId = ?", [clienteID], (err, result) => {
+            pool.query("SELECT nome, email, celular FROM clientes WHERE clienteid = $1", [clienteID], (err, result) => {
                 if (err) {
                     return res.status(500).send(err)
                 }
                 dados_cliente = `
-                    Nome: ${result[0].nome},
-                    Email: ${result[0].email},
-                    Telefone: ${result[0].celular}
+                    Nome: ${result.rows[0].nome},
+                    Email: ${result.rows[0].email},
+                    Telefone: ${result.rows[0].celular}
                 `
             })
         } else {
@@ -148,15 +163,15 @@ router.post('/agendarvisita', (req, res) => {
                 Email: ${email}
             `
         }
-        connection.query("SELECT consultor_email FROM consultores WHERE consultorId = ?", [consultorID], (err, result) => {
+        pool.query("SELECT consultor_email FROM consultores WHERE consultorid = $1", [consultorID], (err, result) => {
             if (err) {
                 return res.status(500).send(err)
             }
-            consultorEmail = result[0].consultor_email
+            consultorEmail = result.rows[0].consultor_email
         })
         // Insere a visita no banco de dados
-        connection.query(
-            "INSERT INTO visitas (clienteId, imoveisID, consultorId, data_visita, comentario) VALUES (?, ?, ?, ?, ?)",
+        pool.query(
+            "INSERT INTO visitas (clienteid, imoveisid, consultorid, data_visita, comentario) VALUES ($1, $2, $3, $4, $5) RETURNING visitaid",
             [clienteID || null, imovelID, consultorID, data_visita, comentario], // clienteID pode ser null
             (err, result) => {
                 if (err) {
@@ -173,13 +188,14 @@ router.post('/agendarvisita', (req, res) => {
 router.get('/cancelarvisita/:id', (req, res) => {
     const visitaId = req.params.id
 
-    const query = "SELECT * FROM visitas WHERE visitaId = ?"
-    connection.query(query, [visitaId], (err, result) => {
+    const query = "SELECT * FROM visitas WHERE visitaid = $1"
+    pool.query(query, [visitaId], (err, result) => {
         if(err){
             return res.status(500).send(err)
         }
 
-        res.send(result)
+        res.send(result.rows)
     })
 })
+
 module.exports = router
