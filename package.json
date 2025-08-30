@@ -4,7 +4,7 @@
   "description": "Projeto Imóveis SA - Frontend e API",
   "main": "index.js",
   "scripts": {
-    "start": "npm run start:docker & wait-on http://localhost:3001/health && npm run start:frontend",
+    "start": "node index.js",
     "start:docker": "cd api && docker-compose up",
     "start:api": "cd api && npm start",
     "start:frontend": "cd interface && npm start",

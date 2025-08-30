@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: imoveis-sa-api
+    env: node
+    buildCommand: npm install && cd api && npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
