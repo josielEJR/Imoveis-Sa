@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Wrapper, Container, Nome } from './style'
 import About from './components/About'
 import Imoveis from './components/Imoveis'
+import { API_URLS } from '../../config/api';
 
 const Corretor = ({corretor}) => {
   const [prodInfo, setProdInfo] = useState([])
@@ -12,7 +13,7 @@ const Corretor = ({corretor}) => {
       redirect: "follow"
     }
 
-    fetch(`http://localhost:3001/consultores/buscarconsultorid?id=${corretor}`, requestOptions)
+    fetch(`API_URLS.CONSULTORES_BUSCArconsultorid?id=${corretor}`, requestOptions)
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
       .then((produto) => {

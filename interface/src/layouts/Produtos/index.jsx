@@ -3,6 +3,7 @@ import FiltroBusca from './components/FiltroBusca';
 import CardsContainer from './components/CardsContainer';
 
 import { Wrapper, Container } from './style'
+import { API_URLS } from '../../config/api';
 
 const Produtos = () => {
 

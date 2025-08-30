@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Card from '../Card'
 
 import { Wrapper, Container, CardsSection, SelectorSection, Selectors, IndexSelector } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const CardsContainer = ({ filters }) => {
 
@@ -20,7 +21,7 @@ const CardsContainer = ({ filters }) => {
             redirect: "follow"
         };
 
-        fetch(`http://localhost:3001/imoveis/busca${filters}`, requestOptions)
+        fetch(`API_URLS.IMOVEIS_BUSCA${filters}`, requestOptions)
             .then((response) => response.text())
             .then((result) => JSON.parse(result))
             .then((result) => {

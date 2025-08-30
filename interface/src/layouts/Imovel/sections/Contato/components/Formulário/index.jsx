@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Form, Input, TextArea, Wrapper } from './style'
 import DatePickerModal from '../Pop-up'
+import { API_URLS } from '../../../../config/api';
 
 const Agendar = ({ imovelID }) => {
     const [animate, setAnimate] = useState(false)
@@ -18,7 +19,7 @@ const Agendar = ({ imovelID }) => {
             redirect: "follow"
         }
 
-        fetch(`http://localhost:3001/imoveis/buscarimovelid?id=${imovelID}`, requestOptions)
+        fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
             .then((response) => response.json())
             .then((produto) => {
                 setProdInfo(produto[0])
@@ -64,7 +65,7 @@ const Agendar = ({ imovelID }) => {
         }
 
         try {
-            const response = await fetch("http://localhost:3001/visita/agendarvisita", requestOptions);
+            const response = await fetch(VISITAS/agendarvisita", requestOptions);
             const data = await response.json();
         
             console.log("Resposta da API:", data);  // Adicione logs aqui

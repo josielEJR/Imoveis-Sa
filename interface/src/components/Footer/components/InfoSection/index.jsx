@@ -5,6 +5,7 @@ import { RiInstagramFill } from "react-icons/ri";
 import { BsLinkedin } from "react-icons/bs";
 
 import { Wrapper, Container, ContactSection, LogoSection, Logo, Contact, ContactInfo, SocialMediaSection, SocialMediaLabel, SocialMedia, SocialMediaLink, MapSection, Map } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const InfoSection = () => {
 

@@ -3,6 +3,7 @@ import { Wrapper, TitlleValue, ValuesSection, ValueCard, ValueIcon, ValueTitle }
 import { FaPeopleCarry } from "react-icons/fa";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { FaRegHandshake } from "react-icons/fa6";
+import { API_URLS } from '../../../../config/api';
 
 const NossosValores = () => {
     return (

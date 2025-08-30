@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 import { MenuButton, CloseMenuButton, NavContent } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const Content = () => {
 
@@ -44,9 +45,9 @@ const Content = () => {
 
                 {displayLogin <= 950 && <Login />}
 
-                <NavOption tipo={"Venda"} url={"http://localhost:3001/imoveis/cidadesvenda"} right="-260" />
+                <NavOption tipo={"Venda"} url={"API_URLS.IMOVEIS_CIDADES_VENDA"} right="-260" />
 
-                <NavOption tipo={"Aluguel"} url={"http://localhost:3001/imoveis/cidadesaluguel"} right="-260" />
+                <NavOption tipo={"Aluguel"} url={"API_URLS.IMOVEIS_CIDADES_ALUGUEL"} right="-260" />
 
                 <Anunciar />
 

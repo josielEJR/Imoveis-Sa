@@ -1,5 +1,6 @@
 import React from 'react';
 import { Wrapper, HistoryContainer, HistoryTitle, HistoryContent, HistoryImage, HistoryText, HistoryParagraph, HistorySubTitle } from './style';
+import { API_URLS } from '../../../../config/api';
 
 const NossaHistoria = () => {
     return (

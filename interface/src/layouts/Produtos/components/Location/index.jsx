@@ -4,6 +4,7 @@ import { Wrapper, Title, LocationSection, InsertLocation, Icon, Label, Input, Dr
 
 import { GrMap } from "react-icons/gr";
 import { FaSearch } from "react-icons/fa";
+import { API_URLS } from '../../../../config/api';
 
 const Location = () => {
 
@@ -28,7 +29,7 @@ const Location = () => {
             redirect: "follow"
         };
 
-        const query = disponibility ? `http://localhost:3001/imoveis/cidades${disponibility}` : `http://localhost:3001/imoveis/cidades`
+        const query = disponibility ? `API_URLS.IMOVEIS_CIDADES${disponibility}` : `API_URLS.IMOVEIS_CIDADES`
 
         fetch(query, requestOptions)
             .then((response) => response.text())

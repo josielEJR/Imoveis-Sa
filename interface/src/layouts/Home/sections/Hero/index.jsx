@@ -4,6 +4,7 @@ import Slider from './components/Slider/index'
 import FiltroBusca from './components/FiltroBusca'
 import { ContainerHero } from './style'
 import config from './components/Slider/components/Imagens/imagens.jsx'
+import { API_URLS } from '../../../../config/api';
 
 const Hero = () => {
 

@@ -8,6 +8,7 @@ import { RiDiscordLine } from "react-icons/ri";
 import { BsTwitterX } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoMdCloseCircleOutline } from "react-icons/io";
+import { API_URLS } from '../../../../config/api';
 
 const Interação = ({ dadosImovel }) => {
   const [showShareOptions, setShowShareOptions] = useState(false);
@@ -21,7 +22,7 @@ const Interação = ({ dadosImovel }) => {
     };
 
     if (localStorage.currentUserID) {
-      fetch(`http://localhost:3001/imoveis/favoritos?clienteID=${localStorage.currentUserID}`, requestOptions)
+      fetch(`API_URLS.IMOVEIS_FAVORITOS?clienteID=${localStorage.currentUserID}`, requestOptions)
         .then(response => response.json())
         .then(result => {
           const isFavorited = result.some(elem => elem.imoveisID === dadosImovel.imoveisID);
@@ -36,7 +37,7 @@ const Interação = ({ dadosImovel }) => {
       return window.location.href = "/login?error=Faça login para favoritar um imóvel";
     }
 
-    const url = favorited ? "http://localhost:3001/imoveis/removerimovelfavorito" : "http://localhost:3001/imoveis/adicionarimovelfavorito";
+    const url = favorited ? "API_URLS.IMOVEIS_REMOVER_FAVORITO" : "API_URLS.IMOVEIS_ADICIONARimovelfavorito";
     const method = favorited ? "DELETE" : "POST";
 
     const requestOptions = {

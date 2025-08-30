@@ -5,6 +5,7 @@ import LocalizaçãoLayout from './sections/Localização'
 import ContatoLayout from './sections/Contato'
 import ImovelInfo from './sections/ImovelInfo'
 import Loading from '../../components/Loading'
+import { API_URLS } from '../../config/api';
 
 const ImovelLayout = ({ imovelID }) => {
   const [consultorId, setConsultorId] = useState(null)
@@ -17,7 +18,7 @@ const ImovelLayout = ({ imovelID }) => {
       redirect: "follow"
     }
 
-    fetch(`http://localhost:3001/imoveis/buscarimovelid?id=${imovelID}`, requestOptions)
+    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
       .then(response => response.json())
       .then(imoveis => {
         if (imoveis.length > 0) {

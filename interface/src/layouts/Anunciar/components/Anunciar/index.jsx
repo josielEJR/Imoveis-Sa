@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Container, Wrapper, Label, LabelContainer, FormConteiner, TitleContainer, Title, Input, Select, AnunciarButton, Error } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const Anunciar = () => {
 
@@ -71,7 +72,7 @@ const Anunciar = () => {
                 redirect: "follow"
             };
 
-            fetch("http://localhost:3001/imoveis/adicionar", requestOptions)
+            fetch(IMOVEIS/adicionar", requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(result)

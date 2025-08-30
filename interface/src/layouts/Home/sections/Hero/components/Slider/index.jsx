@@ -3,6 +3,7 @@ import { ButtonPrice, Container, ImageContainer, TextArea, Direita, Esquerda, Ov
 import { useNavigate } from 'react-router-dom'
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6"
 import NavButtons from './components/NavButtons'
+import { API_URLS } from '../../../../config/api';
 
 const Slider = ({ config }) => {
   const [imageIndex, setImageIndex] = useState(0)

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Container, Content, Title, Wrapper } from './style'
 import CardImovel from './components/CardImovel'
 import DescriçãoImovel from './components/DescriçãoImovel'
+import { API_URLS } from '../../../../config/api';
 
 const ImovelInfo = ({ imovelID, scrollToAgendar }) => {
   const [prodInfo, setProdInfo] = useState({})
@@ -11,7 +12,7 @@ const ImovelInfo = ({ imovelID, scrollToAgendar }) => {
       redirect: "follow"
     }
 
-    fetch(`http://localhost:3001/imoveis/buscarimovelid?id=${imovelID}`, requestOptions)
+    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
       .then((response) => response.json())
       .then((produto) => {
         setProdInfo(produto[0])

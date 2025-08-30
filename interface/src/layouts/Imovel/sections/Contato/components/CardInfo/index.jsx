@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Wrapper, Container, CardContent, CardContainer, Titulo, Contato, Image } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const CardInfo = ({ consultorId }) => {
     const [consultorInfo, setConsultorInfo] = useState({})
@@ -11,7 +12,7 @@ const CardInfo = ({ consultorId }) => {
                 redirect: "follow"
             }
 
-            fetch(`http://localhost:3001/consultores/buscarconsultorid?id=${consultorId}`, requestOptions)
+            fetch(`API_URLS.CONSULTORES_BUSCArconsultorid?id=${consultorId}`, requestOptions)
                 .then(response => response.json())
                 .then(consultorArray => {
                     if (consultorArray.length > 0) {
@@ -31,7 +32,7 @@ const CardInfo = ({ consultorId }) => {
                 <CardContainer
                     key={consultorInfo.id}
                 >
-                    <Image src={`http://localhost:3001/consultores/imagensconsultores/${consultorInfo.consultorId}`} alt={`foto do consultor ${consultorInfo.nome}`} />
+                    <Image src={`API_URLS.CONSULTORES_IMAGEM/${consultorInfo.consultorId}`} alt={`foto do consultor ${consultorInfo.nome}`} />
                 </CardContainer>
                 <CardContent>
                     <Titulo>

@@ -1,5 +1,6 @@
 import React,{ useEffect, useState } from 'react'
 import { Container, Iframe, Wrapper } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const VideoComponent = ({imovelID}) => {
   const [prodInfo, setProdInfo] = useState({})
@@ -10,7 +11,7 @@ const VideoComponent = ({imovelID}) => {
       redirect: "follow"
     }
 
-    fetch(`http://localhost:3001/imoveis/buscarimovelid?id=${imovelID}`, requestOptions)
+    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
       .then((produto) => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Input, TitleBox, ModalOverlay, ModalContent, CloseButton, ButtonWrapper } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const DatePickerModal = ({ isOpen, onClose, onSubmit }) => {
   const [selectedDate, setSelectedDate] = useState('')

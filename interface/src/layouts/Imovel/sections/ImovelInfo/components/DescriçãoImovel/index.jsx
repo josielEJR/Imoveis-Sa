@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Wrapper, Container, Content, Preço, Tipo, ItensWrapper, Button, Itens, Li } from './style'
 import Interação from '../Interação'
+import { API_URLS } from '../../../../config/api';
 
 const DescriçãoImovel = ({ dadosImovel, scrollToAgendar}) => {
   const [animate, setAnimate] = useState(false)

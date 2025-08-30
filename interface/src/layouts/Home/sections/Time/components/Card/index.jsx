@@ -8,6 +8,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import NavButtons from '../NavButtons'
 import { useNavigate } from 'react-router-dom'
+import { API_URLS } from '../../../../config/api';
 
 const Card = () => {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ const Card = () => {
   const [swiperRef, setSwiperRef] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:3001/consultores')
+    fetch(API_URLS.CONSULTORES)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -91,7 +92,7 @@ const Card = () => {
           {products.map((item) => (
             <SwiperSlide key={item.consultorId}>
               <CardContainer onClick={() => handleClick(item)}>
-                <Img src={`http://localhost:3001/consultores/imagensconsultores/${item.consultorId}`} alt={`foto do consultor ${item.nome}`} />
+                <Img src={`${API_URLS.CONSULTORES_IMAGEM}/${item.consultorId}`} alt={`foto do consultor ${item.nome}`} />
                 <Overlay />
                 <CardContent>
                   <InfoIcon>

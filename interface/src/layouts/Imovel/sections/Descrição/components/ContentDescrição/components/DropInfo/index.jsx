@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Aba, DropHover, TextDrop, Title, Wrapper } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const DropInfo = ({ activeIcon, iconName }) => {
     const [iSmalScreen ,setIsSmallScreen] = useState(window.innerWidth <= 960)

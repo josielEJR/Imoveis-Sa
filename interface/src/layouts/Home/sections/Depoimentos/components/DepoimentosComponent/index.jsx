@@ -4,6 +4,7 @@ import { BiSolidQuoteLeft } from "react-icons/bi"
 import { IoCaretDownSharp } from "react-icons/io5"
 import { Container, Wrapper, ContainerDepoimentos, Title, ContainerPerfil, ContainerImagem, ContainerQuote, Comentario, FotoPerfil, ContainerIcon, Texto, NomePerfil, Foto, Img, ContainerComentario, Improvisado, ContainerTitle } from './style'
 import NavButtons from '../NavButtons'
+import { API_URLS } from '../../../../config/api';
 
 const Depoimentos = () => {
   const [imageIndex, setImageIndex] = useState(0)
@@ -15,7 +16,7 @@ const Depoimentos = () => {
   const [touchStartTime, setTouchStartTime] = useState(0)
 
   useEffect(() => {
-    fetch('http://localhost:3001/clientes')
+    fetch(CLIENTES')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -121,7 +122,7 @@ const Depoimentos = () => {
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
             >
-              <ContainerImagem image={`http://localhost:3001/clientes/imagensclientes/${clientes[imageIndex].clienteId}`} />
+              <ContainerImagem image={`API_URLS.CLIENTES_IMAGEM/${clientes[imageIndex].clienteId}`} />
               <ContainerPerfil>
                 <ContainerQuote>
                   <BiSolidQuoteLeft size={60} />
@@ -138,7 +139,7 @@ const Depoimentos = () => {
                 </ContainerComentario>
                 <FotoPerfil>
                   <Foto>
-                    <Img src={`http://localhost:3001/clientes/imagensclientes/${clientes[imageIndex].clienteId}`} />
+                    <Img src={`API_URLS.CLIENTES_IMAGEM/${clientes[imageIndex].clienteId}`} />
                   </Foto>
                   <NomePerfil>
                     {clientes[imageIndex].nome}

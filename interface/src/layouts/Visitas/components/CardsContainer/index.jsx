@@ -6,6 +6,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { FaIdCardClip } from "react-icons/fa6";
 
 import { Wrapper, Container, CardsSection, ConsultorSection, Text, Consultores, Consultor, ConsultorInfo, ConsultorNome, ConsultorEmail, VisitaButton, SelectorSection, Selectors, IndexSelector, Error } from './style'
+import { API_URLS } from '../../../../config/api';
 
 const CardsContainer = () => {
 
@@ -21,13 +22,13 @@ const CardsContainer = () => {
             redirect: "follow"
         };
 
-        fetch(`http://localhost:3001/visita/visitas?clienteID=${localStorage.currentUserID}`, requestOptions)
+        fetch(`API_URLS.VISITAS?clienteID=${localStorage.currentUserID}`, requestOptions)
             .then((response) => response.text())
             .then((result) => JSON.parse(result))
             .then((result) => setProducts(result))
             .catch((error) => console.error(error));
 
-        fetch(`http://localhost:3001/visita/getconsultores?clienteID=${localStorage.currentUserID}`, requestOptions)
+        fetch(`API_URLS.VISITAS_GET_CONSULTORES?clienteID=${localStorage.currentUserID}`, requestOptions)
             .then((response) => response.text())
             .then((result) => JSON.parse(result))
             .then((result) => setConsultores(result))

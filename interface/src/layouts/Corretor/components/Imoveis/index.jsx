@@ -6,13 +6,14 @@ import { GiHomeGarage } from "react-icons/gi"
 import { LuBath } from "react-icons/lu"
 import { IoBed } from "react-icons/io5"
 import { TbRulerMeasure } from "react-icons/tb";
+import { API_URLS } from '../../../../config/api';
 
 const Imoveis = ({corretor}) => {
     const [imoveis, setImoveis] = useState([])
 
     useEffect(() => {
         if (corretor) {
-            fetch(`http://localhost:3001/imoveis/porConsultor?consultorId=${corretor}`) 
+            fetch(`API_URLS.IMOVEIS_POR_CONSULTORES?consultorId=${corretor}`) 
                 .then(response => response.json())
                 .then(data => {
                     setImoveis(data)
@@ -48,7 +49,7 @@ const Imoveis = ({corretor}) => {
                         return (
                             <Card key={imovel.id}
                                 onClick={() => window.location.href = "/imovel?id=" + imovel.imoveisID}>
-                                <BackgroundImage image={`http://localhost:3001/imoveis/imagensimovel/${imovel.imoveisID}`} alt={`Imagem do imóvel ${imovel.imoveisID}`}>
+                                <BackgroundImage image={`API_URLS.IMOVEIS_IMAGEM/${imovel.imoveisID}`} alt={`Imagem do imóvel ${imovel.imoveisID}`}>
                                 <Overlay />
                                 </BackgroundImage>
                                 <CardContent>

@@ -6,6 +6,7 @@ import 'swiper/css/pagination'
 import { Image, Wrapper } from './style'
 
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import { API_URLS } from '../../../../config/api';
 
 const CardImovel = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})
@@ -17,7 +18,7 @@ const CardImovel = ({ imovelID }) => {
       redirect: "follow"
     }
 
-    fetch(`http://localhost:3001/imoveis/buscarimovelid?id=${imovelID}`, requestOptions)
+    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
       .then((response) => response.json())
       .then((produto) => {
         setProdInfo(produto[0])

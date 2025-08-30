@@ -5,6 +5,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 import { Wrapper, BackgroundImage, CardContent, TitleSection, Title, PriceArea, RedirectIndicator, HouseInfo, InfoSection, Label, Value, Favorite } from "./style"
+import { API_URLS } from '../../../../config/api';
 
 const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, vagas, id }) => {
 
@@ -17,7 +18,7 @@ const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, v
             redirect: "follow"
         };
 
-        fetch(`http://localhost:3001/imoveis/favoritos?clienteID=${localStorage.currentUserID}`, requestOptions)
+        fetch(`API_URLS.IMOVEIS_FAVORITOS?clienteID=${localStorage.currentUserID}`, requestOptions)
             .then((response) => response.text())
             .then((result) => JSON.parse(result))
             .then((result) => {
@@ -61,7 +62,7 @@ const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, v
                 redirect: "follow"
             };
 
-            fetch("http://localhost:3001/imoveis/adicionarimovelfavorito", requestOptions)
+            fetch(IMOVEIS/adicionarimovelfavorito", requestOptions)
                 .catch((error) => console.error(error));
         } else {
             setFavorited("false")
@@ -81,7 +82,7 @@ const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, v
                 redirect: "follow"
             };
 
-            fetch("http://localhost:3001/imoveis/removerimovelfavorito", requestOptions)
+            fetch(IMOVEIS/removerimovelfavorito", requestOptions)
                 .catch((error) => console.error(error));
         }
     }
