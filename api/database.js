@@ -17,36 +17,78 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
     process.exit(1)
 }
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 5432,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    ssl: {
-        rejectUnauthorized: false,
-        require: true
-    },
-    connectionTimeoutMillis: 10000,
-    idleTimeoutMillis: 30000,
-    max: 20
-})
-
-// Teste de conexão
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('❌ Erro ao conectar com o banco de dados:')
-        console.error('Código:', err.code)
-        console.error('Mensagem:', err.message)
-        console.error('Detalhes:', err.detail)
-        console.error('Dica:', err.hint)
-        
-        // Não encerrar o processo, apenas logar o erro
-        console.error('❌ Falha na conexão com banco, mas servidor continuará rodando')
-        return
+// Tentar diferentes configurações SSL
+let pool;
+try {
+    // Primeira tentativa: SSL com configuração padrão
+    pool = new Pool({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 5432,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        ssl: {
+            rejectUnauthorized: false,
+            require: true
+        },
+        connectionTimeoutMillis: 15000,
+        idleTimeoutMillis: 30000,
+        max: 20
+    });
+    console.log('✅ Pool criado com SSL obrigatório');
+} catch (error) {
+    console.log('⚠️ Erro na primeira tentativa, tentando sem SSL...');
+    try {
+        // Segunda tentativa: sem SSL
+        pool = new Pool({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 5432,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            connectionTimeoutMillis: 15000,
+            idleTimeoutMillis: 30000,
+            max: 20
+        });
+        console.log('✅ Pool criado sem SSL');
+    } catch (error2) {
+        console.error('❌ Falha em ambas as tentativas:', error2);
+        process.exit(1);
     }
-    console.log('✅ Conectado ao banco de dados PostgreSQL!', res.rows[0])
-})
+}
+
+// Teste de conexão com retry
+let connectionAttempts = 0;
+const maxAttempts = 3;
+
+function testConnection() {
+    connectionAttempts++;
+    console.log(`🔄 Tentativa ${connectionAttempts} de ${maxAttempts}...`);
+    
+    pool.query('SELECT NOW()', (err, res) => {
+        if (err) {
+            console.error(`❌ Tentativa ${connectionAttempts} falhou:`)
+            console.error('Código:', err.code)
+            console.error('Mensagem:', err.message)
+            console.error('Detalhes:', err.detail)
+            console.error('Dica:', err.hint)
+            
+            if (connectionAttempts < maxAttempts) {
+                console.log(`⏳ Aguardando 5 segundos antes da próxima tentativa...`)
+                setTimeout(testConnection, 5000);
+            } else {
+                console.error('❌ Todas as tentativas falharam. Servidor continuará rodando sem banco.')
+                console.error('❌ Verifique as configurações de SSL e conectividade.')
+            }
+            return
+        }
+        console.log('✅ Conectado ao banco de dados PostgreSQL!', res.rows[0])
+        console.log('✅ Conexão estabelecida com sucesso!')
+    })
+}
+
+// Primeira tentativa
+testConnection();
 
 // Tratamento de erros de conexão
 pool.on('error', (err) => {
