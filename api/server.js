@@ -33,12 +33,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-// Health check para o wait-on
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
-});
-
-// API routes
+// API routes (incluindo health check)
 app.use('/api', routes)
 
 // Servir arquivos estáticos do frontend em produção

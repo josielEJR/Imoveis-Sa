@@ -2,6 +2,11 @@ const express = require('express')
 const app = express.Router()
 const path = require('path')
 
+// Health check para o wait-on
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 app.use('/imoveis', require('./rotas/imoveis'))
 app.use('/visita', require('./rotas/visita'))
 app.use('/consultores', require('./rotas/consultores'))
