@@ -17,47 +17,22 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
     process.exit(1)
 }
 
-// Tentar diferentes configurações SSL
-let pool;
-try {
-    // Primeira tentativa: SSL com configuração padrão
-    pool = new Pool({
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT || 5432,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        ssl: {
-            rejectUnauthorized: false,
-            require: true
-        },
-        connectionTimeoutMillis: 15000,
-        idleTimeoutMillis: 30000,
-        max: 20
-    });
-    console.log('✅ Pool criado com SSL obrigatório');
-} catch (error) {
-    console.log('⚠️ Erro na primeira tentativa, tentando sem SSL...');
-    try {
-        // Segunda tentativa: sem SSL
-        pool = new Pool({
-            host: process.env.DB_HOST,
-            port: process.env.DB_PORT || 5432,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            connectionTimeoutMillis: 15000,
-            idleTimeoutMillis: 30000,
-            max: 20
-        });
-        console.log('✅ Pool criado sem SSL');
-    } catch (error2) {
-        console.error('❌ Falha em ambas as tentativas:', error2);
-        process.exit(1);
-    }
-}
+// Configuração mais robusta usando string de conexão
+const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}?sslmode=require`
 
-// Teste de conexão com retry
+const pool = new Pool({
+    connectionString,
+    ssl: { 
+        rejectUnauthorized: false 
+    },
+    connectionTimeoutMillis: 15000,
+    idleTimeoutMillis: 30000,
+    max: 20
+})
+
+console.log('✅ Pool criado com configuração SSL otimizada')
+
+// Sistema de retry para conexão
 let connectionAttempts = 0;
 const maxAttempts = 3;
 
@@ -79,12 +54,13 @@ function testConnection() {
             } else {
                 console.error('❌ Todas as tentativas falharam. Servidor continuará rodando sem banco.')
                 console.error('❌ Verifique as configurações de SSL e conectividade.')
+                console.error('💡 Dica: Execute "node test-connection.js" para diagnosticar problemas')
             }
-            return
+        } else {
+            console.log('✅ Conectado ao banco de dados PostgreSQL!', res.rows[0])
+            console.log('✅ Conexão estabelecida com sucesso!')
         }
-        console.log('✅ Conectado ao banco de dados PostgreSQL!', res.rows[0])
-        console.log('✅ Conexão estabelecida com sucesso!')
-    })
+    });
 }
 
 // Primeira tentativa
