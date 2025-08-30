@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
 const routes = require('./router')
+const { initDatabase } = require('./init-database')
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -46,6 +47,25 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../interface/dist/index.html'))
 })
 
-app.listen(port, () => { 
-   console.log('server started at port ' + port)
-})
+// Inicializar banco de dados e depois iniciar servidor
+async function startServer() {
+    try {
+        console.log('🚀 Iniciando servidor...')
+        
+        // Inicializar banco de dados
+        await initDatabase()
+        
+        // Iniciar servidor após inicializar banco
+        app.listen(port, () => { 
+            console.log('✅ Servidor iniciado na porta', port)
+            console.log('🎉 Aplicação pronta para uso!')
+        })
+        
+    } catch (error) {
+        console.error('❌ Erro ao inicializar servidor:', error)
+        process.exit(1)
+    }
+}
+
+// Iniciar servidor
+startServer()
