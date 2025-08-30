@@ -15,17 +15,19 @@ app.use(cors({
     credentials: true
 }))
 
-// Configurar CSP headers
+// Configurar CSP headers mais permissivos
 app.use((req, res, next) => {
     res.setHeader(
         'Content-Security-Policy',
-        "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data: https:; " +
-        "connect-src 'self' https:; " +
-        "frame-src 'none';"
+        "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
+        "style-src 'self' 'unsafe-inline' https: data:; " +
+        "font-src 'self' https: data:; " +
+        "img-src 'self' data: https: blob:; " +
+        "connect-src 'self' https: ws: wss:; " +
+        "media-src 'self' data: https:; " +
+        "object-src 'none'; " +
+        "frame-src 'self' https:;"
     )
     next()
 })
@@ -36,16 +38,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // API routes (incluindo health check)
 app.use('/api', routes)
 
-// Servir arquivos estáticos do frontend em produção
-if (process.env.NODE_ENV === 'production') {
-    // Servir arquivos estáticos do build
-    app.use(express.static(path.join(__dirname, '../interface/dist')))
-    
-    // Para todas as outras rotas, servir o index.html (SPA)
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../interface/dist/index.html'))
-    })
-}
+// Servir arquivos estáticos do frontend (sempre)
+app.use(express.static(path.join(__dirname, '../interface/dist')))
+
+// Para todas as outras rotas, servir o index.html (SPA)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../interface/dist/index.html'))
+})
 
 app.listen(port, () => { 
    console.log('server started at port ' + port)

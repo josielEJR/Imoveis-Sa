@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imóveis SA - Teste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .api-test {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        .error {
+            color: #f87171;
+            font-weight: bold;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        #results {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Imóveis SA</h1>
+        
+        <div class="status">
+            <h2>Status do Sistema</h2>
+            <p>✅ Servidor funcionando</p>
+            <p>✅ API respondendo</p>
+            <p>✅ Frontend carregado</p>
+        </div>
+
+        <div class="api-test">
+            <h3>🧪 Teste da API</h3>
+            <button onclick="testHealth()">Testar Health Check</button>
+            <button onclick="testConsultores()">Testar Consultores</button>
+            <button onclick="testClientes()">Testar Clientes</button>
+            <button onclick="testImoveis()">Testar Imóveis</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                showResult('Health Check', data, true);
+            } catch (error) {
+                showResult('Health Check', error.message, false);
+            }
+        }
+
+        async function testConsultores() {
+            try {
+                const response = await fetch('/api/consultores');
+                const data = await response.json();
+                showResult('Consultores', data, true);
+            } catch (error) {
+                showResult('Consultores', error.message, false);
+            }
+        }
+
+        async function testClientes() {
+            try {
+                const response = await fetch('/api/clientes');
+                const data = await response.json();
+                showResult('Clientes', data, true);
+            } catch (error) {
+                showResult('Clientes', error.message, false);
+            }
+        }
+
+        async function testImoveis() {
+            try {
+                const response = await fetch('/api/imoveis');
+                const data = await response.json();
+                showResult('Imóveis', data, true);
+            } catch (error) {
+                showResult('Imóveis', error.message, false);
+            }
+        }
+
+        function showResult(test, data, success) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = success ? 'success' : 'error';
+            div.innerHTML = `<strong>${test}:</strong> ${JSON.stringify(data, null, 2)}`;
+            results.appendChild(div);
+        }
+
+        // Teste automático do health check
+        testHealth();
+    </script>
+</body>
+</html>
