@@ -17,20 +17,23 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
     process.exit(1)
 }
 
-// Configuração mais robusta usando string de conexão
-const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}?sslmode=require`
-
+// Configuração SSL Obrigatório que funcionou no teste
 const pool = new Pool({
-    connectionString,
-    ssl: { 
-        rejectUnauthorized: false 
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: {
+        rejectUnauthorized: false,
+        require: true
     },
     connectionTimeoutMillis: 15000,
     idleTimeoutMillis: 30000,
     max: 20
 })
 
-console.log('✅ Pool criado com configuração SSL otimizada')
+console.log('✅ Pool criado com configuração SSL obrigatório')
 
 // Sistema de retry para conexão
 let connectionAttempts = 0;
