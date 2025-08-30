@@ -9,3 +9,13 @@ services:
         value: production
       - key: PORT
         value: 3001
+      - key: DB_HOST
+        value: "your-mysql-host-here"
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_USER
+        value: "your-mysql-username"
+      - key: DB_PASSWORD
+        value: "your-mysql-password"
+      - key: DB_NAME
+        value: "websiteInfo"
