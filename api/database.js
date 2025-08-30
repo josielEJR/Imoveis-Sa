@@ -23,16 +23,38 @@ const pool = new Pool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: {
+        rejectUnauthorized: false,
+        require: true
+    },
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+    max: 20
 })
 
 // Teste de conexão
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.log('Erro ao conectar com o banco de dados:', err)
-        process.exit(1)
+        console.error('❌ Erro ao conectar com o banco de dados:')
+        console.error('Código:', err.code)
+        console.error('Mensagem:', err.message)
+        console.error('Detalhes:', err.detail)
+        console.error('Dica:', err.hint)
+        
+        // Não encerrar o processo, apenas logar o erro
+        console.error('❌ Falha na conexão com banco, mas servidor continuará rodando')
+        return
     }
-    console.log('Conectado ao banco de dados PostgreSQL!', res.rows[0])
+    console.log('✅ Conectado ao banco de dados PostgreSQL!', res.rows[0])
+})
+
+// Tratamento de erros de conexão
+pool.on('error', (err) => {
+    console.error('❌ Erro no pool de conexões:', err)
+})
+
+pool.on('connect', () => {
+    console.log('✅ Nova conexão estabelecida com PostgreSQL')
 })
 
 module.exports = pool
