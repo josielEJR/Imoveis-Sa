@@ -1,20 +1,23 @@
-const mysql = require('mysql')
+const { Pool } = require('pg')
 
-console.log('Começando a conexão com o banco de dados ...')
+console.log('Começando a conexão com o banco de dados PostgreSQL...')
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST || 'database',
-    port: process.env.DB_PORT || '3306',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'root',
-    database: process.env.DB_NAME || 'websiteInfo',
+const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 })
-connection.connect(err => {
+
+// Teste de conexão
+pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.log('Error ao se conectar com o banco de dados:', err)
+        console.log('Erro ao conectar com o banco de dados:', err)
         process.exit(1)
     }
-    return console.log('conectado ao banco de dados !')
+    console.log('Conectado ao banco de dados PostgreSQL!', res.rows[0])
 })
 
-module.exports = connection
+module.exports = pool
