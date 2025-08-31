@@ -4,13 +4,9 @@ import CardsContainer from './components/CardsContainer';
 
 
 import { Wrapper, Container } from './style'
-import { useLocation } from "react-router-dom";
 
 const Produtos = () => {
-    const location = useLocation();
-
-    // Pega só a query string (?cidade=SP&disponibilidade=venda)
-    const filters = new URLSearchParams(location.search);
+    const filters = decodeURIComponent(window.location.href.replace("https://imoveis-sa.onrender.com/api/imoveis", ""))
 
     return (
         <Wrapper>
