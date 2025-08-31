@@ -1,6 +1,5 @@
 import React from 'react'
 import { Logo, LoadingSpinner, RotatingCircle, Wrapper } from './style'
-import { API_URLS } from '../../config/api';
 
 const Loading = () => {
   return (

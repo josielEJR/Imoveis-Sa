@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 import Content from './components/NavContent/index'
 
 import { Wrapper, Nav, Logo, Img } from './style'
-import { API_URLS } from '../../config/api';
 
 const Navbar = () => {
     return (

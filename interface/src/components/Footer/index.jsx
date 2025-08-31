@@ -1,8 +1,6 @@
 import InfoSection from "./components/InfoSection"
 
 import { Wrapper, Container, CopyrightSection, Copyright } from "./style"
-import { API_URLS } from '../../config/api';
-
 const Footer = () => {
     return (
         <Wrapper>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Container, Wrapper, Label, LabelContainer, FormConteiner, TitleContainer, Title, Input, Select, AnunciarButton, Error } from './style'
+import { API_URLS } from '../../../../config/api'
 
 
 const Anunciar = () => {
@@ -20,6 +21,7 @@ const Anunciar = () => {
     const [disponibilidade, setDisponibilidade] = useState('');
     const [descricao, setDescricao] = useState('');
     const [Erro, setErro] = useState('');
+    
 
     const navigate = useNavigate()
 

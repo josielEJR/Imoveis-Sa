@@ -8,6 +8,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import NavButtons from '../NavButtons'
 import { useNavigate } from 'react-router-dom'
+import { API_URLS } from '../../../../../../config/api';
 
 const Card = () => {
   const navigate = useNavigate()
