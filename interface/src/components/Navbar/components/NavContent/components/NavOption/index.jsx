@@ -6,7 +6,6 @@ import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { ContentLink, Link, Text } from '../../style'
 
 import Itens from './itens'
-import { API_URLS } from '../../../../config/api';
 
 const NavOption = ({ tipo, url, right }) => {
 
