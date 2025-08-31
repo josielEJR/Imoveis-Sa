@@ -74,10 +74,12 @@ const Anunciar = () => {
                 redirect: "follow"
             };
 
-            fetch(`API_URLS.IMOVEIS_ADICIONAR`, requestOptions)
+            fetch(API_URLS.IMOVEIS_ADICIONAR, requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(result)
+                    console.log("URL chamada:", API_URLS.IMOVEIS_ADICIONAR);
+                    console.log("Token:", localStorage.getItem("token"));
                     // window.location.href = disponibilidade == "venda" || disponibilidade == "venda_e_alugel" ? "http://localhost:3000/imoveis?disponibilidade=venda" : "http://localhost:3000/imoveis?disponibilidade=aluguel"
                 })
                 .catch((error) => console.error(error));

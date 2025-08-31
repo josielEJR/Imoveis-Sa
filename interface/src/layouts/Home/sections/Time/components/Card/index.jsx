@@ -90,9 +90,9 @@ const Card = () => {
           }}
         >
           {products.map((item) => (
-            <SwiperSlide key={item.consultorId}>
+            <SwiperSlide key={item.consultorid}>
               <CardContainer onClick={() => handleClick(item)}>
-                <Img src={`${API_URLS.CONSULTORES_IMAGEM}/${item.consultorId}`} alt={`foto do consultor ${item.nome}`} />
+                <Img src={`${API_URLS.CONSULTORES_IMAGEM}/${item.consultorid}`} alt={`foto do consultor ${item.nome}`} />
                 <Overlay />
                 <CardContent>
                   <InfoIcon>
@@ -100,7 +100,7 @@ const Card = () => {
                   </InfoIcon>
                   <Nome>{item.nome}</Nome>
                   <Telefone>{item.telefone}</Telefone>
-                  <Email>{item.email}</Email>
+                  <Email>{item.consultor_email}</Email>
                   <Article>{item.sobre}</Article>
                 </CardContent>
               </CardContainer>
