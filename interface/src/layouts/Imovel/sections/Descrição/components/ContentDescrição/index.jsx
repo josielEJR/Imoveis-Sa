@@ -8,7 +8,6 @@ import { TbBed } from "react-icons/tb"
 import { PiBathtub } from "react-icons/pi"
 import { MdInfoOutline } from "react-icons/md"
 import DropInfo from './components/DropInfo'
-import { API_URLS } from '../../../../config/api';
 
 const ContentDescrição = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})

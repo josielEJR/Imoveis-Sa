@@ -6,7 +6,6 @@ import { GiHomeGarage } from "react-icons/gi"
 import { LuBath } from "react-icons/lu"
 import { IoBed } from "react-icons/io5"
 import { TbRulerMeasure } from "react-icons/tb";
-import { API_URLS } from '../../../../config/api';
 
 const Imoveis = ({corretor}) => {
     const [imoveis, setImoveis] = useState([])

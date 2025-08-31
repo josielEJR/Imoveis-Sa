@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Form, Input, TextArea, Wrapper } from './style'
 import DatePickerModal from '../Pop-up'
-import { API_URLS } from '../../../../config/api';
 
 const Agendar = ({ imovelID }) => {
     const [animate, setAnimate] = useState(false)
@@ -65,7 +64,7 @@ const Agendar = ({ imovelID }) => {
         }
 
         try {
-            const response = await fetch(VISITAS/agendarvisita", requestOptions);
+            const response = await fetch(`API_URLS.VISITAS_AGENDAR`, requestOptions);
             const data = await response.json();
         
             console.log("Resposta da API:", data);  // Adicione logs aqui

@@ -8,7 +8,6 @@ import { RiDiscordLine } from "react-icons/ri";
 import { BsTwitterX } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { API_URLS } from '../../../../config/api';
 
 const Interação = ({ dadosImovel }) => {
   const [showShareOptions, setShowShareOptions] = useState(false);

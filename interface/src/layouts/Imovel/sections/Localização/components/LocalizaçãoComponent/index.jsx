@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Wrapper, Map } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const LocalizaçãoComponent = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})

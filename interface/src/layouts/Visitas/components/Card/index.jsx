@@ -5,7 +5,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 import { Wrapper, BackgroundImage, CardContent, TitleSection, Title, PriceArea, RedirectIndicator, HouseInfo, InfoSection, Label, Value, Favorite } from "./style"
-import { API_URLS } from '../../../../config/api';
+
 
 const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, vagas, id }) => {
 
@@ -62,7 +62,7 @@ const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, v
                 redirect: "follow"
             };
 
-            fetch(IMOVEIS/adicionarimovelfavorito", requestOptions)
+            fetch(`API_URLS.IMOVEIS_ADICIONAR_FAVORITO`, requestOptions)
                 .catch((error) => console.error(error));
         } else {
             setFavorited("false")
@@ -82,7 +82,7 @@ const Card = ({ imagem, bairro, cidade, tipo, preco, area, quartos, banheiros, v
                 redirect: "follow"
             };
 
-            fetch(IMOVEIS/removerimovelfavorito", requestOptions)
+            fetch(`API_URLS.IMOVEIS_REMOVER_FAVORITO`, requestOptions)
                 .catch((error) => console.error(error));
         }
     }

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Wrapper, Container, CardContent, CardContainer, Titulo, Contato, Image } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const About = ({ dados }) => {
 

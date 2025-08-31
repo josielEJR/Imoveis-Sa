@@ -1,7 +1,6 @@
 import React from 'react';
 import Accordion from '../DuvidasFrequentes/index'
 import { Wrapper, FaqContainer } from './style';
-import { API_URLS } from '../../../../config/api';
 
 const faqItems = [
     {

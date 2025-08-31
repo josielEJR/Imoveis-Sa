@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { Wrapper, SelectorSection, IndexSelector } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const NavButtons = ({ selectedButton, handleButtonClick }) => {
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 import { Container, Wrapper, InnerWrapper, Title, Input, OptionsContainer, RememberMe, Checkbox, ForgotPassword, LoginButton, LoginError, Signup, PasswordWrapper, EyeIcon } from './style'
-import { API_URLS } from '../../../../config/api';
+
 
 const Login = () => {
 
@@ -77,7 +77,7 @@ const Login = () => {
                 redirect: "follow"
             };
 
-            const loginValid = await fetch(CLIENTES/login", requestOptions)
+            const loginValid = await fetch(`API_URLS.CLIENTES_LOGIN`, requestOptions)
                 .then((response) => response.text())
                 .then((result) => JSON.parse(result))
                 .then((result) => result.token)
@@ -130,7 +130,7 @@ const Login = () => {
                     redirect: "follow"
                 };
 
-                const consultorLoginValid = await fetch(CONSULTORES/login", requestOptions)
+                const consultorLoginValid = await fetch(`API_URLS.CONSULTORES_LOGIN`, requestOptions)
                     .then((response) => response.text())
                     .then((result) => JSON.parse(result))
                     .then((result) => result.token)

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Title, Wrapper, Container, } from './style'
 import Card from './components/Card'
-import { API_URLS } from '../../../../config/api';
 
 const Time = () => {
   return (

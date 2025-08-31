@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Container, Title, Wrapper, TitleWrapper } from './style'
 import LocalizaçãoComponent from './components/LocalizaçãoComponent'
 import VideoComponent from './components/VideoComponent'
-import { API_URLS } from '../../../../config/api';
 
 const LocalizaçãoLayout = ({imovelID}) => {
   const [activeComponent, setActiveComponent] = useState('localização')

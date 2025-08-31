@@ -6,7 +6,6 @@ import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { API_URLS } from '../../../../config/api';
 
 const images = [
     "https://blog.triiio.com.br/wp-content/uploads/2021/01/Investir-em-imóveis-de-luxo-vale-a-pena.jpg",

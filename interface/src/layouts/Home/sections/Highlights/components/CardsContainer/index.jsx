@@ -9,7 +9,6 @@ import { Wrapper, Container, TitleSection, Title } from './style'
 import 'swiper/css';
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-import { API_URLS } from '../../../../config/api';
 
 const CardsContainer = () => {
 

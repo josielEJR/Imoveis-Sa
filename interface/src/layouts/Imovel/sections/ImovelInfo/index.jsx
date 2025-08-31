@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Container, Content, Title, Wrapper } from './style'
 import CardImovel from './components/CardImovel'
 import DescriçãoImovel from './components/DescriçãoImovel'
-import { API_URLS } from '../../../../config/api';
 
 const ImovelInfo = ({ imovelID, scrollToAgendar }) => {
   const [prodInfo, setProdInfo] = useState({})

@@ -1,6 +1,5 @@
 import React,{ useEffect, useState } from 'react'
 import { Container, Iframe, Wrapper } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const VideoComponent = ({imovelID}) => {
   const [prodInfo, setProdInfo] = useState({})
