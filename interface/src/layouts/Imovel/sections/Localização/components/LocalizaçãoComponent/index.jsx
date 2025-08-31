@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Wrapper, Map } from './style'
+import API_URLS from '../../../../../../config/api'
 
 const LocalizaçãoComponent = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})
@@ -10,7 +11,7 @@ const LocalizaçãoComponent = ({ imovelID }) => {
       redirect: "follow"
     }
 
-    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
+    fetch(`${API_URLS.IMOVEIS_BUSCAR_ID}?id=${imovelID}`, requestOptions)
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
       .then((produto) => {

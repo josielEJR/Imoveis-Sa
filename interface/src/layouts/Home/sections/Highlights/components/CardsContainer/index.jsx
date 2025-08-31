@@ -9,6 +9,7 @@ import { Wrapper, Container, TitleSection, Title } from './style'
 import 'swiper/css';
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
+import API_URLS from '../../../../../../config/api';
 
 const CardsContainer = () => {
 
@@ -28,7 +29,7 @@ const CardsContainer = () => {
             redirect: "follow"
         };
 
-        fetch(`API_URLS.IMOVEIS_ORDENAR_QUALIDADE`, requestOptions)
+        fetch(API_URLS.IMOVEIS_ORDENAR_QUALIDADE, requestOptions)
             .then((response) => response.text())    
             .then((result) => JSON.parse(result))
             .then((result) => {

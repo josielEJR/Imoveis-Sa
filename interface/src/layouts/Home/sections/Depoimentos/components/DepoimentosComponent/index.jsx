@@ -16,7 +16,7 @@ const Depoimentos = () => {
   const [touchStartTime, setTouchStartTime] = useState(0)
 
   useEffect(() => {
-    fetch(`API_URLS.CLIENTES`)
+    fetch(API_URLS.CLIENTES)
       .then(response => { 
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -122,7 +122,7 @@ const Depoimentos = () => {
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
             >
-              <ContainerImagem image={`API_URLS.CLIENTES_IMAGEM/${clientes[imageIndex].clienteId}`} />
+              <ContainerImagem image={`${API_URLS.CLIENTES_IMAGEM}/${clientes[imageIndex].clienteId}`} />
               <ContainerPerfil>
                 <ContainerQuote>
                   <BiSolidQuoteLeft size={60} />
@@ -139,7 +139,7 @@ const Depoimentos = () => {
                 </ContainerComentario>
                 <FotoPerfil>
                   <Foto>
-                    <Img src={`API_URLS.CLIENTES_IMAGEM/${clientes[imageIndex].clienteId}`} />
+                    <Img src={`${API_URLS.CLIENTES_IMAGEM}/${clientes[imageIndex].clienteId}`} />
                   </Foto>
                   <NomePerfil>
                     {clientes[imageIndex].nome}

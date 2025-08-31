@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Card from '../Card'
 
 import { Wrapper, Container, CardsSection, SelectorSection, Selectors, IndexSelector, Error } from './style'
+import API_URLS from '../../../../config/api'
 
 const CardsContainer = () => {
 
@@ -16,7 +17,7 @@ const CardsContainer = () => {
             redirect: "follow"
         };
 
-        fetch(`API_URLS.IMOVEIS_FAVORITOS?clienteID=${localStorage.currentUserID}`, requestOptions)
+        fetch(`${API_URLS.IMOVEIS_FAVORITOS}?clienteID=${localStorage.currentUserID}`, requestOptions)
             .then((response) => response.text())
             .then((result) => JSON.parse(result))
             .then((result) => {

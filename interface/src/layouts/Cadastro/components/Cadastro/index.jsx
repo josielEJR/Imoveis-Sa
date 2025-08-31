@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Container, Wrapper, InnerWrapper, Title, TextContainer, HighlightedLink, Input, CadastroButton, PasswordWrapper, EyeIcon, ErroCadastro } from './style'
 
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import API_URLS from '../../../../config/api';
 const Cadastro = () => {
 
     const [animate, setAnimate] = useState(false);
@@ -50,7 +51,7 @@ const Cadastro = () => {
                 redirect: "follow"
             };
 
-            fetch(`API_URLS.CLIENTES_CADASTRAR`, requestOptions)   
+            fetch(API_URLS.CLIENTES_CADASTRAR, requestOptions)   
                 .then((response) => response.text())
                 .then((result) => JSON.parse(result))
                 .then((result) => {

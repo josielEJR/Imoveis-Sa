@@ -5,7 +5,6 @@ import NossosValores from '../SobreNos/components/NossosValores/index';
 import SliderComponent from '../SobreNos/components/Carrossel/index';
 import FaqSection from '../SobreNos/components/FaqSection/index';
 import { Wrapper } from './style';
-import { API_URLS } from '../../config/api';
 
 const QuemSomos = () => {
   return (

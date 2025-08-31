@@ -8,6 +8,7 @@ import { TbBed } from "react-icons/tb"
 import { PiBathtub } from "react-icons/pi"
 import { MdInfoOutline } from "react-icons/md"
 import DropInfo from './components/DropInfo'
+import API_URLS from '../../../../../../config/api'
 
 const ContentDescrição = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})
@@ -19,7 +20,7 @@ const ContentDescrição = ({ imovelID }) => {
       redirect: "follow"
     }
 
-    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
+    fetch(`${API_URLS.IMOVEIS_BUSCAR_ID}?id=${imovelID}`, requestOptions)
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
       .then((produto) => {

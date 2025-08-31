@@ -1,5 +1,6 @@
 import React from 'react'
 import { Wrapper, Container, CardContent, CardContainer, Titulo, Contato, Image } from './style'
+import API_URLS from '../../../../config/api'
 
 const About = ({ dados }) => {
 
@@ -7,7 +8,7 @@ const About = ({ dados }) => {
         <Wrapper>
             <Container>
                 <CardContainer>
-                    <Image src={`API_URLS.CONSULTORES_IMAGEM/${dados.consultorId}`} alt={`foto do consultor ${dados.nome}`} />
+                    <Image src={`${API_URLS.CONSULTORES_IMAGEM}/${dados.consultorId}`} alt={`foto do consultor ${dados.nome}`} />
                 </CardContainer>
                 <CardContent>
                     <Titulo>

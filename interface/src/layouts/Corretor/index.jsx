@@ -13,7 +13,7 @@ const Corretor = ({corretor}) => {
       redirect: "follow"
     }
 
-    fetch(`API_URLS.CONSULTORES_BUSCArconsultorid?id=${corretor}`, requestOptions)
+    fetch(`${API_URLS.CONSULTORES_BUSCAR_ID}?id=${corretor}`, requestOptions)
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
       .then((produto) => {

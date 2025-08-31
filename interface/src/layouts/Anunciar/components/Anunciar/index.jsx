@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { Container, Wrapper, Label, LabelContainer, FormConteiner, TitleContainer, Title, Input, Select, AnunciarButton, Error } from './style'
 import { API_URLS } from '../../../../config/api'
 
-
 const Anunciar = () => {
 
     const [animate, setAnimate] = useState(false);
@@ -78,8 +77,6 @@ const Anunciar = () => {
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(result)
-                    console.log("URL chamada:", API_URLS.IMOVEIS_ADICIONAR);
-                    console.log("Token:", localStorage.getItem("token"));
                     // window.location.href = disponibilidade == "venda" || disponibilidade == "venda_e_alugel" ? "http://localhost:3000/imoveis?disponibilidade=venda" : "http://localhost:3000/imoveis?disponibilidade=aluguel"
                 })
                 .catch((error) => console.error(error));

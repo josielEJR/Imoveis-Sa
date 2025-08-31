@@ -2,24 +2,25 @@ import Location from './components/Location';
 import FiltroBusca from './components/FiltroBusca';
 import CardsContainer from './components/CardsContainer';
 
+
 import { Wrapper, Container } from './style'
-import { API_URLS } from '../../config/api';
+import { useLocation } from "react-router-dom";
 
 const Produtos = () => {
+    const location = useLocation();
 
-    const filters = decodeURIComponent(window.location.href.replace("http://localhost:3000/imoveis", ""))
+    // Pega só a query string (?cidade=SP&disponibilidade=venda)
+    const filters = new URLSearchParams(location.search);
 
     return (
         <Wrapper>
             <Container>
                 <Location />
-
                 <FiltroBusca />
-
                 <CardsContainer filters={filters} />
             </Container>
         </Wrapper>
-    )
-}
+    );
+};
 
 export default Produtos

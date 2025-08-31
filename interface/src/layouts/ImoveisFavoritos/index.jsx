@@ -1,7 +1,6 @@
 import CardsContainer from './components/CardsContainer'
 
 import { Wrapper, Container, Title } from './style'
-import { API_URLS } from '../../config/api';
 
 const ImoveisFavoritos = () => {
     return (

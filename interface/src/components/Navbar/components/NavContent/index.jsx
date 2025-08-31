@@ -45,9 +45,9 @@ const Content = () => {
 
                 {displayLogin <= 950 && <Login />}
 
-                <NavOption tipo={"Venda"} url={"API_URLS.IMOVEIS_CIDADES_VENDA"} right="-260" />
+                <NavOption tipo={"Venda"} url={API_URLS.IMOVEIS_CIDADES_VENDA} right="-260" />
 
-                <NavOption tipo={"Aluguel"} url={"API_URLS.IMOVEIS_CIDADES_ALUGUEL"} right="-260" />
+                <NavOption tipo={"Aluguel"} url={API_URLS.IMOVEIS_CIDADES_ALUGUEL} right="-260" />
 
                 <Anunciar />
 

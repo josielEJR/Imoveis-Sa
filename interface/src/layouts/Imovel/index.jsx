@@ -18,7 +18,7 @@ const ImovelLayout = ({ imovelID }) => {
       redirect: "follow"
     }
 
-    fetch(`API_URLS.IMOVEIS_BUSCArimovelid?id=${imovelID}`, requestOptions)
+    fetch(`${API_URLS.IMOVEIS_BUSCAR_ID}?id=${imovelID}`, requestOptions)
       .then(response => response.json())
       .then(imoveis => {
         if (imoveis.length > 0) {
