@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ContainerInput, Codigo, IconDrop, Input, Button, Wrapper, UlOptions, LiTipo, CheckBoxWrapper, CheckBox, CheckBoxLabel, ErroText, ContainerFiltro } from './style'
 import { IoIosArrowDropdownCircle } from "react-icons/io"
-import { API_URLS } from '../../../../config/api';
 
 const FiltroBusca = () => {
   const navigate = useNavigate()
@@ -141,7 +140,7 @@ const FiltroBusca = () => {
         query += query ? `&bairro=${selectedBairro.join(',')}` : `?bairro=${selectedBairro.join(',')}`
       }
 
-      fetch(IMOVEIS/busca" + query, { method: "GET", redirect: "follow" })
+      fetch(`API_URLS.IMOVEIS_BUSCA` + query, { method: "GET", redirect: "follow" })
         .then((response) => response.json())
         .then((data) => {
           console.log('Filtros selecionado :', data)

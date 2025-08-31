@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Container, Wrapper, Label, LabelContainer, FormConteiner, TitleContainer, Title, Input, Select, AnunciarButton, Error } from './style'
-import { API_URLS } from '../../../../config/api';
+
 
 const Anunciar = () => {
 
@@ -68,11 +68,11 @@ const Anunciar = () => {
             const requestOptions = {
                 method: "POST",
                 headers: myHeaders,
-                body: raw,
+                body: raw,  
                 redirect: "follow"
             };
 
-            fetch(IMOVEIS/adicionar", requestOptions)
+            fetch(`API_URLS.IMOVEIS_ADICIONAR`, requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(result)

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Card from '../Card'
 
 import { Wrapper, Container, CardsSection, SelectorSection, Selectors, IndexSelector } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const CardsContainer = ({ filters }) => {
 

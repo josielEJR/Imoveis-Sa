@@ -4,7 +4,7 @@ import { BiSolidQuoteLeft } from "react-icons/bi"
 import { IoCaretDownSharp } from "react-icons/io5"
 import { Container, Wrapper, ContainerDepoimentos, Title, ContainerPerfil, ContainerImagem, ContainerQuote, Comentario, FotoPerfil, ContainerIcon, Texto, NomePerfil, Foto, Img, ContainerComentario, Improvisado, ContainerTitle } from './style'
 import NavButtons from '../NavButtons'
-import { API_URLS } from '../../../../config/api';
+import { API_URLS } from '../../../../../../config/api';
 
 const Depoimentos = () => {
   const [imageIndex, setImageIndex] = useState(0)
@@ -16,8 +16,8 @@ const Depoimentos = () => {
   const [touchStartTime, setTouchStartTime] = useState(0)
 
   useEffect(() => {
-    fetch(CLIENTES')
-      .then(response => {
+    fetch(`API_URLS.CLIENTES`)
+      .then(response => { 
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

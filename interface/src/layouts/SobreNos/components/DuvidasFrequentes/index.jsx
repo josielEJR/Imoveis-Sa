@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Wrapper, AccordionContainer, AccordionItem, AccordionHeader, AccordionContent, Icon } from './style';
-import { API_URLS } from '../../../../config/api';
 
 const Accordion = ({ items }) => {
     const [activeIndex, setActiveIndex] = useState(null);

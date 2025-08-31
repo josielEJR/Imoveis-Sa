@@ -1,6 +1,5 @@
 import React from 'react';
 import { Wrapper, Titulo, VideoContainer } from './style';
-import { API_URLS } from '../../../../config/api';
 
 const QuemSomosVideo = () => {
     return (

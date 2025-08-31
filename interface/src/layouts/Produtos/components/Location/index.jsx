@@ -4,7 +4,6 @@ import { Wrapper, Title, LocationSection, InsertLocation, Icon, Label, Input, Dr
 
 import { GrMap } from "react-icons/gr";
 import { FaSearch } from "react-icons/fa";
-import { API_URLS } from '../../../../config/api';
 
 const Location = () => {
 

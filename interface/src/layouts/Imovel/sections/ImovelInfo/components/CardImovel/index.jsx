@@ -6,7 +6,6 @@ import 'swiper/css/pagination'
 import { Image, Wrapper } from './style'
 
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
-import { API_URLS } from '../../../../config/api';
 
 const CardImovel = ({ imovelID }) => {
   const [prodInfo, setProdInfo] = useState({})

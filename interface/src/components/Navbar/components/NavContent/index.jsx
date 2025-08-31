@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 import { MenuButton, CloseMenuButton, NavContent } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const Content = () => {
 

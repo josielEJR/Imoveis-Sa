@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom'
 
 import { ContentLink } from '../../style'
-import { API_URLS } from '../../../../config/api';
 
 const SobreNos = () => {
     return (

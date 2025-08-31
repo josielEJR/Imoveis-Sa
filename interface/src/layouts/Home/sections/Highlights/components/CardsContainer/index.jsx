@@ -29,8 +29,8 @@ const CardsContainer = () => {
             redirect: "follow"
         };
 
-        fetch(IMOVEIS/ordenarimovelqualidade", requestOptions)
-            .then((response) => response.text())
+        fetch(`API_URLS.IMOVEIS_ORDENAR_QUALIDADE`, requestOptions)
+            .then((response) => response.text())    
             .then((result) => JSON.parse(result))
             .then((result) => {
                 const arrayAux = []

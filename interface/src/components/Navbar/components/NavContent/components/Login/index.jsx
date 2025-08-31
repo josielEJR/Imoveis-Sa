@@ -8,7 +8,6 @@ import { IoMdMail, IoIosLogOut } from "react-icons/io";
 
 import { ContentLink, Dropdown, Ul, Li, Button } from '../../style'
 import { LoginButton, LoginLabel } from './style'
-import { API_URLS } from '../../../../config/api';
 
 const Login = () => {
 

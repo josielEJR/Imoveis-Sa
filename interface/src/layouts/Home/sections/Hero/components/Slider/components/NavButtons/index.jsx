@@ -1,7 +1,6 @@
 // NavButtons.js
 import React from 'react';
 import { WrapperNavButton, ContainerNavButton, NavButton } from './style'; 
-import { API_URLS } from '../../../../config/api';
 
 const NavButtons = ({ selectedButton, handleButtonClick }) => {
   return (
