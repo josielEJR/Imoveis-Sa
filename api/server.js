@@ -11,8 +11,8 @@ const port = process.env.PORT || 3001
 // 🔧 Lista de domínios permitidos
 const allowedOrigins = [
   'http://localhost:3000',                 // dev local
-  'https://seu-projeto.vercel.app',        // Vercel sem www
-  'https://www.seu-projeto.vercel.app',    // Vercel com www (se usar)
+  'https://imoveis-sa-front.vercel.app',        // Vercel sem www
+  'https://www.imoveis-sa-front.vercel.app',    // Vercel com www (se usar)
 ]
 
 // Configurar CORS
