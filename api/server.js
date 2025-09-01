@@ -8,29 +8,40 @@ const { initDatabase } = require('./init-database')
 const app = express()
 const port = process.env.PORT || 3001
 
+// 🔧 Lista de domínios permitidos
+const allowedOrigins = [
+  'http://localhost:3000',                 // dev local
+  'https://seu-projeto.vercel.app',        // Vercel sem www
+  'https://www.seu-projeto.vercel.app',    // Vercel com www (se usar)
+]
+
 // Configurar CORS
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://imoveis-sa.onrender.com', 'https://www.imoveis-sa.onrender.com']
-        : true,
-    credentials: true
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true) // permite curl/postman
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    return callback(new Error('Origin não permitido pelo CORS'))
+  },
+  credentials: true,
 }))
 
-// Configurar CSP headers mais permissivos
+// Configurar CSP headers (mais permissivos)
 app.use((req, res, next) => {
-    res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
-        "style-src 'self' 'unsafe-inline' https: data:; " +
-        "font-src 'self' https: data:; " +
-        "img-src 'self' data: https: blob:; " +
-        "connect-src 'self' https: ws: wss:; " +
-        "media-src 'self' data: https:; " +
-        "object-src 'none'; " +
-        "frame-src 'self' https:;"
-    )
-    next()
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
+    "style-src 'self' 'unsafe-inline' https: data:; " +
+    "font-src 'self' https: data:; " +
+    "img-src 'self' data: https: blob:; " +
+    "connect-src 'self' https: ws: wss:; " +
+    "media-src 'self' data: https:; " +
+    "object-src 'none'; " +
+    "frame-src 'self' https:;"
+  )
+  next()
 })
 
 app.use(bodyParser.json())
@@ -44,27 +55,27 @@ app.use(express.static(path.join(__dirname, '../interface/build')))
 
 // Para todas as outras rotas, servir o index.html (SPA)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../interface/build/index.html'))
+  res.sendFile(path.join(__dirname, '../interface/build/index.html'))
 })
 
 // Inicializar banco de dados e depois iniciar servidor
 async function startServer() {
-    try {
-        console.log('🚀 Iniciando servidor...')
-        
-        // Inicializar banco de dados
-        await initDatabase()
-        
-        // Iniciar servidor após inicializar banco
-        app.listen(port, () => { 
-            console.log('✅ Servidor iniciado na porta', port)
-            console.log('🎉 Aplicação pronta para uso!')
-        })
-        
-    } catch (error) {
-        console.error('❌ Erro ao inicializar servidor:', error)
-        process.exit(1)
-    }
+  try {
+    console.log('🚀 Iniciando servidor...')
+    
+    // Inicializar banco de dados
+    await initDatabase()
+    
+    // Iniciar servidor após inicializar banco
+    app.listen(port, () => { 
+      console.log('✅ Servidor iniciado na porta', port)
+      console.log('🎉 Aplicação pronta para uso!')
+    })
+    
+  } catch (error) {
+    console.error('❌ Erro ao inicializar servidor:', error)
+    process.exit(1)
+  }
 }
 
 // Iniciar servidor
